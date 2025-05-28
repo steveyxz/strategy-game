@@ -1,6 +1,8 @@
 package me.partlysunny.game;
 
 import me.partlysunny.ColorPalette;
+import me.partlysunny.game.menu.InfoMenu;
+import me.partlysunny.game.menu.SideMenu;
 import org.jline.jansi.Ansi;
 
 import java.util.ArrayList;
@@ -12,9 +14,11 @@ public class Map {
 
     private final List<List<Tile>> map;
 
+    private SideMenu currentMenu = new InfoMenu();
+
     // HALF_WIDTHS
-    private static final int DISPLAY_WIDTH = 25;
-    private static final int DISPLAY_HEIGHT = 10;
+    private static final int DISPLAY_WIDTH = 30;
+    private static final int DISPLAY_HEIGHT = 13;
 
     public Map(int width, int height) {
         map = new ArrayList<>(width);
@@ -45,6 +49,7 @@ public class Map {
 
     public String render(int centreX, int centreY) {
         StringBuilder sb = new StringBuilder();
+        List<String> menus = currentMenu.buildMenu(this);
         for (int y = centreY - DISPLAY_HEIGHT; y <= centreY + DISPLAY_HEIGHT; y++) {
             for (int x = centreX - DISPLAY_WIDTH; x <= centreX + DISPLAY_WIDTH; x++) {
                 if (x < 0 || y < 0 || x >= map.size() || y >= map.get(x).size()) {
@@ -63,6 +68,10 @@ public class Map {
                 sb.append(Ansi.ansi().fgDefault());
                 sb.append(Ansi.ansi().bgDefault());
             }
+            int trueY = y - (centreY - DISPLAY_HEIGHT);
+            sb.append(menus.get(trueY));
+            sb.append(Ansi.ansi().fgDefault());
+            sb.append(Ansi.ansi().bgDefault());
             sb.append("\n");
         }
         return sb.toString();

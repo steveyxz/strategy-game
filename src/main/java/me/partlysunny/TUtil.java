@@ -17,6 +17,7 @@ public class TUtil {
     public static void debug(String msg) {
         if (debug) {
             T.writer().println(msg);
+            T.writer().flush();
         }
     }
 

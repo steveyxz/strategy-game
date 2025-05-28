@@ -61,14 +61,13 @@ public class ClientLoop {
                 state.map = map;
                 state.scores.put(ID, 0);
 
-//                while (true) {
-//                    terminal.writer().print("\n".repeat(60) + map.render());
-//                    terminal.flush();
-//                    String line = reader.readLine();
-//                    if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
-//                        break;
-//                    }
-//                }
+                while (true) {
+                    refresh();
+                    String line = reader.readLine();
+                    if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("exit")) {
+                        break;
+                    }
+                }
 
                 future.channel().closeFuture().sync();
             } catch (Exception e) {
@@ -79,6 +78,17 @@ public class ClientLoop {
         } finally {
             // Cleanup resources if needed
         }
+    }
+
+    public static void refresh() {
+        Terminal terminal = TUtil.T;
+        Map map = state.map;
+        cameraX = Math.max(cameraX, 0);
+        cameraY = Math.max(cameraY, 0);
+        cameraX = Math.min(cameraX, map.getWidth() - 1);
+        cameraY = Math.min(cameraY, map.getHeight() - 1);
+        terminal.writer().print("\n".repeat(60) + map.render(cameraX, cameraY));
+        terminal.flush();
     }
 
 }

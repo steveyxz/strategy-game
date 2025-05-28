@@ -29,7 +29,7 @@ test {
 }
 
 ext {
-    javaMainClass = "me.partlysunny.Main"
+    javaMainClass = "shell.ShellMain"
 }
 
 application {

@@ -3,6 +3,7 @@ package me.partlysunny.network.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import me.partlysunny.TUtil;
+import me.partlysunny.game.GameHandler;
 import me.partlysunny.network.Packet;
 
 public class ServerPacketHandler extends ChannelInboundHandlerAdapter {

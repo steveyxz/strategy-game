@@ -8,10 +8,9 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 import me.partlysunny.TUtil;
 import me.partlysunny.game.GameState;
-import me.partlysunny.game.Map;
+import me.partlysunny.game.GameMap;
 import me.partlysunny.network.PacketDecoder;
 import me.partlysunny.network.PacketEncoder;
 import org.jline.reader.LineReader;
@@ -30,7 +29,6 @@ public class ClientLoop {
     public static int cameraY = 0;
 
     public static void start(String[] args) throws IOException {
-        state = new GameState();
         try (Terminal terminal = TerminalBuilder.builder()
                 .system(true)
                 .build()) {
@@ -56,10 +54,6 @@ public class ClientLoop {
                 ChannelFuture future = bootstrap.connect(host, port).sync();
 
                 System.out.println("Connected to server at " + host + ":" + port);
-                // temporary behaviour before we have shared map etc
-                Map map = new Map(50, 40);
-                state.map = map;
-                state.scores.put(ID, 0);
 
                 while (true) {
                     refresh();
@@ -82,12 +76,18 @@ public class ClientLoop {
 
     public static void refresh() {
         Terminal terminal = TUtil.T;
-        Map map = state.map;
+        if (state == null) {
+            terminal.writer().println("Waiting for server to start...");
+            terminal.writer().println("Type `start` in the server");
+            terminal.writer().flush();
+            return;
+        }
+        GameMap gameMap = state.gameMap;
         cameraX = Math.max(cameraX, 0);
         cameraY = Math.max(cameraY, 0);
-        cameraX = Math.min(cameraX, map.getWidth() - 1);
-        cameraY = Math.min(cameraY, map.getHeight() - 1);
-        terminal.writer().print("\n".repeat(60) + map.render(cameraX, cameraY));
+        cameraX = Math.min(cameraX, gameMap.getWidth() - 1);
+        cameraY = Math.min(cameraY, gameMap.getHeight() - 1);
+        terminal.writer().print("\n".repeat(60) + gameMap.render(cameraX, cameraY));
         terminal.flush();
     }
 

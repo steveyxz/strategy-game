@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.partlysunny.network.client.ServerboundIdRequest;
 import me.partlysunny.network.server.ClientboundIdResponse;
+import me.partlysunny.network.server.ClientboundMapUpdate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class PacketRegistry {
     static {
         packets.put(SERVERBOUND_MASK ^ 256, ServerboundIdRequest.class);
         packets.put(256, ClientboundIdResponse.class);
+        packets.put(257, ClientboundMapUpdate.class);
         for (Integer i : packets.keySet()) {
             packetsByClass.put(packets.get(i), i);
         }
@@ -31,18 +33,23 @@ public class PacketRegistry {
         }
         Integer i = packetsByClass.get(packet.getClass());
         ByteBuf buf = Unpooled.buffer();
-        buf.writeInt(i);
         packet.serialise(buf);
-        return buf;
+
+        ByteBuf other = Unpooled.buffer();
+        other.writeInt(i);
+        other.writeInt(buf.readableBytes());
+        other.writeBytes(buf);
+        return other;
     }
 
-    public static Packet generate(int type, ByteBuf data) {
+    public static Packet generate(int type, int readSize, ByteBuf data) {
         if (packets.containsKey(type)) {
             Class<? extends Packet> clazz = packets.get(type);
             Packet packet = null;
             try {
                 packet = clazz.getDeclaredConstructor().newInstance();
-                if (data.readableBytes() >= packet.payloadSize()) {
+                // readSize ensures that the packet is completely transferred before we process its data
+                if (data.readableBytes() >= readSize) {
                     packet.load(data);
                     return packet;
                 } else {

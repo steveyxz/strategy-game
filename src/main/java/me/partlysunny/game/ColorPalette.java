@@ -1,6 +1,6 @@
-package me.partlysunny;
+package me.partlysunny.game;
 
-import me.partlysunny.game.Tile;
+import me.partlysunny.game.tile.Tile;
 import org.jline.jansi.Ansi;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class ColorPalette {
 
     private static final Ansi ansi = Ansi.ansi();
 
-    public static final ColorPalette DEFAULT = ColorPalette.of().def(ansi.fgDefault()).tag("empty", ansi.fgGreen());
+    public static final ColorPalette DEFAULT = ColorPalette.of().def(ansi.fgDefault()).tag("empty", ansi.fgDefault()).tag("ground", ansi.fgBrightBlack());
 
     private Ansi defaultColor = Ansi.ansi().fg(Ansi.Color.DEFAULT);
     private Map<String, Ansi> tagColors = new HashMap<>();
@@ -29,7 +29,7 @@ public class ColorPalette {
         return this;
     }
 
-    public String mark(Tile tile) {
+    public String mark(Taggable tile) {
         String base = defaultColor.toString();
         for (String tag : tile.getTags()) {
             Ansi color = tagColors.get(tag);

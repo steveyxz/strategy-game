@@ -1,0 +1,5 @@
+PACKET PROTOCOL
+31st bit from right is 1 if serverbound, 0 if clientbound
+
+0-255 reserved for status code (unused for now)
+256 is ID registration -- serverbound id request, clientbound id registration response

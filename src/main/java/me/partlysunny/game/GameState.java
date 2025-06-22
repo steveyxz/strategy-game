@@ -1,6 +1,7 @@
 package me.partlysunny.game;
 
 import io.netty.buffer.ByteBuf;
+import me.partlysunny.game.map.GameMap;
 import me.partlysunny.network.Serialisable;
 
 import java.util.HashMap;

@@ -2,6 +2,7 @@ package me.partlysunny.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import me.partlysunny.TUtil;
 import me.partlysunny.network.client.ServerboundIdRequest;
 import me.partlysunny.network.server.ClientboundIdResponse;
 import me.partlysunny.network.server.ClientboundMapUpdate;
@@ -15,7 +16,7 @@ public class PacketRegistry {
     private static final Map<Integer, Class<? extends Packet>> packets = new HashMap<>();
     private static final Map<Class<? extends Packet>, Integer> packetsByClass = new HashMap<>();
 
-    private static final int SERVERBOUND_MASK = 1 << 31;
+    private static final int SERVERBOUND_MASK = 1 << 30;
 
     static {
         packets.put(SERVERBOUND_MASK ^ 256, ServerboundIdRequest.class);
@@ -33,12 +34,15 @@ public class PacketRegistry {
         }
         Integer i = packetsByClass.get(packet.getClass());
         ByteBuf buf = Unpooled.buffer();
+        TUtil.debug("Packet ID: " + packet.getClass().getName() + " is class of packet type " + i);
         packet.serialise(buf);
 
         ByteBuf other = Unpooled.buffer();
         other.writeInt(i);
         other.writeInt(buf.readableBytes());
+        TUtil.debug("Building a serialised packet of type " + packet.getClass().getSimpleName() + " with size " + buf.readableBytes());
         other.writeBytes(buf);
+        buf.release();
         return other;
     }
 

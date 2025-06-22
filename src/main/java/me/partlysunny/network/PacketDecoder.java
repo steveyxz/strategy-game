@@ -3,6 +3,7 @@ package me.partlysunny.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import me.partlysunny.TUtil;
 
 import java.util.List;
 
@@ -19,9 +20,12 @@ public class PacketDecoder extends ByteToMessageDecoder {
             }
             packet = byteBuf.readInt();
             size = byteBuf.readInt();
+            TUtil.debug("Received the start of a packet: type = " + packet + ", size = " + size);
         }
+        TUtil.debug("Trying to decode the packet: type = " + packet + ", size = " + size);
         Packet p = PacketRegistry.generate(packet, size, byteBuf);
         if (p == null) return;
+        TUtil.debug("Successfully decoded the packet: type = " + packet + ", size = " + size);
         list.add(p);
         packet = -1;
         size = -1;

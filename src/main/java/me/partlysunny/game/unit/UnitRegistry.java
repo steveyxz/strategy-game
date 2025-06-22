@@ -1,11 +1,8 @@
 package me.partlysunny.game.unit;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import me.partlysunny.game.GameMap;
-import me.partlysunny.network.Packet;
-import me.partlysunny.network.client.ServerboundIdRequest;
-import me.partlysunny.network.server.ClientboundIdResponse;
+import me.partlysunny.game.map.GameMap;
+import me.partlysunny.game.unit.type.UnknownCitizen;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -16,8 +13,18 @@ public class UnitRegistry {
     private static final Map<Integer, Class<? extends Unit>> units = new HashMap<>();
     private static final Map<Class<? extends Unit>, Integer> unitsByClass = new HashMap<>();
 
-    static {
+    public enum UnitType {
+        UNKNOWN_CITIZEN
+    }
 
+    private static void registerUnit(UnitType type, Class<? extends Unit> unit) {
+        int id = type.ordinal();
+        units.put(id, unit);
+        unitsByClass.put(unit, id);
+    }
+
+    static {
+        registerUnit(UnitType.UNKNOWN_CITIZEN, UnknownCitizen.class);
     }
 
     public static Unit generate(ByteBuf data, GameMap map, boolean serverSide) {
@@ -27,13 +34,14 @@ public class UnitRegistry {
             Unit unit = null;
             try {
                 unit = clazz.getDeclaredConstructor(GameMap.class, Boolean.class).newInstance(map, serverSide);
+                unit.load(data);
                 return unit;
             } catch (InstantiationException | InvocationTargetException | IllegalAccessException |
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
-        throw new IllegalStateException("Unknown packet type: " + type);
+        throw new IllegalStateException("Unknown unit type: " + type);
     }
 
 }

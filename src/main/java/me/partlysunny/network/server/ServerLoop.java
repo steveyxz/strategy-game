@@ -6,7 +6,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import me.partlysunny.TUtil;
 import me.partlysunny.game.GameHandler;
-import me.partlysunny.game.GameMap;
 import me.partlysunny.network.PacketDecoder;
 import me.partlysunny.network.PacketEncoder;
 import org.jline.reader.LineReader;
@@ -44,7 +43,7 @@ public class ServerLoop {
             TUtil.T = terminal;
             // Bind the server to a port (e.g., 8080)
             ChannelFuture f = bootstrap.bind(port).sync();
-            System.out.println("Server started successfully on port " + port);
+            TUtil.debug("Server started successfully on port " + port);
             // here we do the server loop?
             while (true) {
                 String line = reader.readLine();

@@ -1,43 +1,58 @@
 package me.partlysunny.game;
 
-import me.partlysunny.game.tile.Tile;
-import org.jline.jansi.Ansi;
+import me.partlysunny.game.map.RenderableMap;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ColorPalette {
 
-    private static final Ansi ansi = Ansi.ansi();
+    public static final ColorPalette DEFAULT = ColorPalette.of().defFg(Color.GRAY).tagFg("empty", Color.WHITE).tagFg("grass", Color.GREEN).tagFg("sand", Color.YELLOW);
 
-    public static final ColorPalette DEFAULT = ColorPalette.of().def(ansi.fgDefault()).tag("empty", ansi.fgDefault()).tag("ground", ansi.fgBrightBlack());
-
-    private Ansi defaultColor = Ansi.ansi().fg(Ansi.Color.DEFAULT);
-    private Map<String, Ansi> tagColors = new HashMap<>();
+    private Color defaultFgColor = Color.BLACK;
+    private Color defaultBgColor = new Color(179, 179, 179);
+    private final Map<String, Color> tagFgColors = new HashMap<>();
+    private final Map<String, Color> tagBgColors = new HashMap<>();
 
     public static ColorPalette of() {
         return new ColorPalette();
     }
 
-    public ColorPalette def(Ansi defaultColor) {
-        this.defaultColor = defaultColor;
+    public ColorPalette defFg(Color defaultColor) {
+        this.defaultFgColor = defaultColor;
         return this;
     }
 
-    public ColorPalette tag(String tag, Ansi color) {
-        tagColors.put(tag, color);
+    public ColorPalette defBg(Color defaultColor) {
+        this.defaultBgColor = defaultColor;
         return this;
     }
 
-    public String mark(Taggable tile) {
-        String base = defaultColor.toString();
+    public ColorPalette tagFg(String tag, Color color) {
+        tagFgColors.put(tag, color);
+        return this;
+    }
+
+    public ColorPalette tagBg(String tag, Color color) {
+        tagBgColors.put(tag, color);
+        return this;
+    }
+
+    public void mark(Taggable tile, RenderableMap.RenderableTile target) {
+        Color fg = defaultFgColor;
+        Color bg = defaultBgColor;
         for (String tag : tile.getTags()) {
-            Ansi color = tagColors.get(tag);
+            Color color = tagFgColors.get(tag);
             if (color != null) {
-                base = color.toString();
+                fg = color;
+            }
+            color = tagBgColors.get(tag);
+            if (color != null) {
+                bg = color;
             }
         }
-        return base;
+        target.setTextColor(fg).setHighlightColor(bg);
     }
 
 }

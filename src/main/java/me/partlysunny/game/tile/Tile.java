@@ -1,8 +1,9 @@
 package me.partlysunny.game.tile;
 
 import io.netty.buffer.ByteBuf;
-import me.partlysunny.game.GameMap;
 import me.partlysunny.game.Taggable;
+import me.partlysunny.game.map.GameMap;
+import me.partlysunny.game.map.RenderableMap;
 import me.partlysunny.game.unit.Unit;
 import me.partlysunny.game.unit.UnitRegistry;
 import me.partlysunny.network.Serialisable;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 public class Tile implements Serialisable, Taggable {
 
-    public record TileData(int typeID, Set<String> tags, char display) {
+    public record TileData(TileRegistry.TileType type, Set<String> tags, char display) {
     }
 
     protected Set<String> tags;
@@ -32,7 +33,7 @@ public class Tile implements Serialisable, Taggable {
         } else {
             this.tags = new HashSet<>(tileData.tags);
             this.display = tileData.display;
-            this.typeID = tileData.typeID;
+            this.typeID = tileData.type.ordinal();
         }
     }
 
@@ -48,11 +49,13 @@ public class Tile implements Serialisable, Taggable {
         return tags.contains(tag);
     }
 
-    public String render() {
+    public RenderableMap.RenderableTile render() {
         if (unit != null) {
             return unit.render();
         }
-        return gameMap.colorPalette.mark(this) + display;
+        RenderableMap.RenderableTile rtile = new RenderableMap.RenderableTile().setC(display);
+        gameMap.colorPalette.mark(this, rtile);
+        return rtile;
     }
 
     public String[] getTags() {
@@ -93,8 +96,20 @@ public class Tile implements Serialisable, Taggable {
             base.writeBoolean(false);
         } else {
             base.writeBoolean(true);
-            unit.serialise(base);
+            base = unit.serialise(base);
         }
         return base;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public boolean setUnit(Unit unit) {
+        if (this.unit != null) {
+            return false;
+        }
+        this.unit = unit;
+        return true;
     }
 }

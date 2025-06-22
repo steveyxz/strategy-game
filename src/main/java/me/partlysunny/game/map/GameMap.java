@@ -1,16 +1,15 @@
-package me.partlysunny.game;
+package me.partlysunny.game.map;
 
 import io.netty.buffer.ByteBuf;
-import me.partlysunny.game.map.MapGenerator;
-import me.partlysunny.game.map.TestMapGenerator;
+import me.partlysunny.game.ColorPalette;
 import me.partlysunny.game.menu.InfoMenu;
 import me.partlysunny.game.menu.SideMenu;
 import me.partlysunny.game.tile.Tile;
 import me.partlysunny.game.tile.TileRegistry;
+import me.partlysunny.game.unit.Unit;
 import me.partlysunny.network.Serialisable;
-import org.jline.jansi.Ansi;
 
-import java.util.List;
+import java.awt.*;
 
 public class GameMap implements Serialisable {
 
@@ -20,9 +19,8 @@ public class GameMap implements Serialisable {
 
     private final SideMenu currentMenu = new InfoMenu();
 
-    // HALF_WIDTHS
-    private static final int DISPLAY_WIDTH = 30;
-    private static final int DISPLAY_HEIGHT = 13;
+    // HALF_WIDTH
+    public static final int DISPLAY_SIZE = 6;
 
     private final int width;
     private final int height;
@@ -62,34 +60,49 @@ public class GameMap implements Serialisable {
         return width;
     }
 
-    public String render(int centreX, int centreY) {
-        StringBuilder sb = new StringBuilder();
-        List<String> menus = currentMenu.buildMenu(this);
-        for (int y = centreY - DISPLAY_HEIGHT; y <= centreY + DISPLAY_HEIGHT; y++) {
-            for (int x = centreX - DISPLAY_WIDTH; x <= centreX + DISPLAY_WIDTH; x++) {
-                if (x < 0 || y < 0 || x >= width || y >= height) {
-                    sb.append(" ");
+
+    public RenderableMap render(int player) {
+        boolean[][] inVision = new boolean[width][height];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Tile tile = getTile(x, y);
+                Unit unit = tile.getUnit();
+                if (unit == null) {
                     continue;
                 }
-                Tile tile = getTile(x, y);
-                if (x == centreX && y == centreY) {
-                    sb.append(Ansi.ansi().bgBrightRed());
+                if (unit.getOwnerID() != player) {
+                    continue;
                 }
-                if (tile != null) {
-                    sb.append(tile.render());
-                } else {
-                    sb.append(" "); // Empty space for out of bounds
+                if (unit.hasAttr("vision")) {
+                    int visionRad = unit.getAttr("vision");
+                    for (int i = x - visionRad; i <= x + visionRad; i++) {
+                        for (int j = y - visionRad; j <= y + visionRad; j++) {
+                            int distSq1 = (i - x) * (i - x) + (j - y) * (j - y);
+                            int distSq2 = visionRad * visionRad;
+                            if (distSq1 < distSq2) {
+                                inVision[i][j] = true;
+                            }
+                        }
+                    }
                 }
-                sb.append(Ansi.ansi().fgDefault());
-                sb.append(Ansi.ansi().bgDefault());
             }
-            int trueY = y - (centreY - DISPLAY_HEIGHT);
-            sb.append(menus.get(trueY));
-            sb.append(Ansi.ansi().fgDefault());
-            sb.append(Ansi.ansi().bgDefault());
-            sb.append("\n");
         }
-        return sb.toString();
+        RenderableMap map = new RenderableMap(this);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (!inVision[x][y]) {
+                    map.get(x, y).setTextColor(Color.GRAY);
+                    map.get(x, y).setC('#');
+                } else {
+                    Tile tile = getTile(x, y);
+                    if (tile != null) {
+                        map.set(x, y, tile.render());
+                    }
+                }
+            }
+        }
+        return map;
     }
 
     // CREATE IS ONLY EVER CALLED AS A CLIENT!!!!
@@ -128,5 +141,12 @@ public class GameMap implements Serialisable {
 
     public boolean isServerSide() {
         return serverSide;
+    }
+
+    public boolean summon(Unit unit, int x, int y) {
+        if (x < 0 || y < 0 || x >= width || y >= height) {
+            return false;
+        }
+        return map[x][y].setUnit(unit);
     }
 }

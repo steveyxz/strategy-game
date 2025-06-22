@@ -16,6 +16,10 @@ public class TUtil {
 
     public static void debug(String msg) {
         if (debug) {
+            if (T == null) {
+                System.out.println(msg);
+                return;
+            }
             T.writer().println(msg);
             T.writer().flush();
         }

@@ -1,6 +1,5 @@
 package me.partlysunny.game.map;
 
-import me.partlysunny.game.GameMap;
 import me.partlysunny.game.tile.TileRegistry;
 
 import java.util.Random;
@@ -27,7 +26,7 @@ public class TestMapGenerator implements MapGenerator {
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
                 if (random.nextBoolean()) {
-                    map.setTile(x, y, TileRegistry.generateTile(TileRegistry.TileType.EMPTY, map, true));
+                    map.setTile(x, y, TileRegistry.generateTile(TileRegistry.TileType.SAND, map, true));
                 } else {
                     map.setTile(x, y, TileRegistry.generateTile(TileRegistry.TileType.GRASS, map, true));
                 }

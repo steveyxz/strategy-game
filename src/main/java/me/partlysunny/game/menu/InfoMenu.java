@@ -1,6 +1,6 @@
 package me.partlysunny.game.menu;
 
-import me.partlysunny.game.GameMap;
+import me.partlysunny.game.map.GameMap;
 
 import java.util.List;
 

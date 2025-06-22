@@ -1,7 +1,7 @@
 package me.partlysunny.game.tile;
 
 import io.netty.buffer.ByteBuf;
-import me.partlysunny.game.GameMap;
+import me.partlysunny.game.map.GameMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,12 +13,18 @@ public class TileRegistry {
 
     public enum TileType {
         EMPTY,
-        GRASS
+        GRASS,
+        SAND
+    }
+
+    private static void addTile(Tile.TileData toAdd) {
+        data.put(toAdd.type().ordinal(), toAdd);
     }
 
     static {
-        data.put(TileType.EMPTY.ordinal(), new Tile.TileData(0, Set.of("empty"), '.'));
-        data.put(TileType.GRASS.ordinal(), new Tile.TileData(1, Set.of("grassy", "ground"), '^'));
+        addTile(new Tile.TileData(TileType.EMPTY, Set.of("empty"), '.'));
+        addTile(new Tile.TileData(TileType.GRASS, Set.of("grass", "ground"), '^'));
+        addTile(new Tile.TileData(TileType.SAND, Set.of("sand", "ground"), '#'));
     }
 
     public static Tile generateTile(int tileType, GameMap gameMap, boolean serverSide) {

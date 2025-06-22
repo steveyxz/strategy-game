@@ -1,10 +1,12 @@
 package me.partlysunny.game.unit;
 
 import io.netty.buffer.ByteBuf;
-import me.partlysunny.game.GameMap;
+import me.partlysunny.TUtil;
+import me.partlysunny.game.map.GameMap;
 import me.partlysunny.game.Taggable;
 import me.partlysunny.game.event.EventExecutor;
 import me.partlysunny.game.event.GameListener;
+import me.partlysunny.game.map.RenderableMap;
 import me.partlysunny.network.Serialisable;
 
 import java.nio.charset.StandardCharsets;
@@ -15,8 +17,8 @@ import java.util.Set;
 
 public abstract class Unit implements Serialisable, GameListener, Taggable {
 
-    protected Map<String, Object> attributes;
-    protected Set<String> tags;
+    protected Map<String, Object> attributes = new HashMap<>();
+    protected Set<String> tags = new HashSet<>();
     protected int ownerID;
     protected int unitType;
     protected GameMap gameMap;
@@ -25,11 +27,14 @@ public abstract class Unit implements Serialisable, GameListener, Taggable {
         this(gameMap, false);
     }
 
-    public Unit(GameMap gameMap, boolean real) {
+    public Unit(GameMap gameMap, Boolean real) {
         this.gameMap = gameMap;
         if (real) {
             EventExecutor.register(this);
         }
+        unitType = getType().ordinal();
+        initAttributes();
+        initTags();
     }
 
     public void addTag(String tag) {
@@ -54,9 +59,12 @@ public abstract class Unit implements Serialisable, GameListener, Taggable {
     public abstract char displayChar();
     public abstract void initTags();
     public abstract void initAttributes();
+    public abstract UnitRegistry.UnitType getType();
 
-    public String render() {
-        return gameMap.colorPalette.mark(this) + displayChar();
+    public RenderableMap.RenderableTile render() {
+        RenderableMap.RenderableTile rtile = new RenderableMap.RenderableTile().setC(displayChar());
+        gameMap.colorPalette.mark(this, rtile);
+        return rtile;
     }
 
     @Override
@@ -94,6 +102,7 @@ public abstract class Unit implements Serialisable, GameListener, Taggable {
         base.writeInt(unitType);
         base.writeInt(ownerID);
         base.writeInt(tags.size());
+        TUtil.debug("Loading " + tags.size() + " tags");
         for (String tag : tags) {
             base.writeInt(tag.getBytes(StandardCharsets.UTF_8).length);
             base.writeCharSequence(tag, StandardCharsets.UTF_8);
@@ -116,4 +125,48 @@ public abstract class Unit implements Serialisable, GameListener, Taggable {
         return base;
     }
 
+    public boolean hasAttr(String key) {
+        return attributes.containsKey(key);
+    }
+
+    public <T> T getAttr(String key) {
+        return (T) attributes.get(key);
+    }
+
+    public <T> void setAttr(String key, T value) {
+        attributes.put(key, value);
+    }
+
+    public void debugAttr() {
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    public int getOwnerID() {
+        return ownerID;
+    }
+
+    public Unit setOwnerID(int ownerID) {
+        this.ownerID = ownerID;
+        return this;
+    }
+
+    public int getUnitType() {
+        return unitType;
+    }
+
+    public Unit setUnitType(int unitType) {
+        this.unitType = unitType;
+        return this;
+    }
+
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public Unit setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+        return this;
+    }
 }

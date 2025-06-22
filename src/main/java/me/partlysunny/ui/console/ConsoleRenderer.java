@@ -1,8 +1,8 @@
-package me.partlysunny.game.ui.console;
+package me.partlysunny.ui.console;
 
 import me.partlysunny.TUtil;
 import me.partlysunny.game.GameState;
-import me.partlysunny.game.ui.Renderer;
+import me.partlysunny.ui.Renderer;
 import me.partlysunny.network.client.ClientLoop;
 import me.partlysunny.network.client.PointerWidget;
 import org.jline.reader.LineReader;

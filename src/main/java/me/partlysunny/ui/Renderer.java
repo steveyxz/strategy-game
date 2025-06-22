@@ -1,4 +1,4 @@
-package me.partlysunny.game.ui;
+package me.partlysunny.ui;
 
 import me.partlysunny.game.GameState;
 

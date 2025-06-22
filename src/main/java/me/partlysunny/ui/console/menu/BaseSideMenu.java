@@ -1,4 +1,4 @@
-package me.partlysunny.game.menu;
+package me.partlysunny.ui.console.menu;
 
 import me.partlysunny.game.map.GameMap;
 import org.jline.jansi.Ansi;

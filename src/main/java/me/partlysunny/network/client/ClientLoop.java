@@ -11,8 +11,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import me.partlysunny.TUtil;
 import me.partlysunny.game.map.GameMap;
 import me.partlysunny.game.GameState;
-import me.partlysunny.game.ui.Renderer;
-import me.partlysunny.game.ui.window.SwingRenderer;
+import me.partlysunny.ui.Renderer;
+import me.partlysunny.ui.window.SwingRenderer;
 import me.partlysunny.network.PacketDecoder;
 import me.partlysunny.network.PacketEncoder;
 

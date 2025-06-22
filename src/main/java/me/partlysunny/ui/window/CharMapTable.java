@@ -1,6 +1,5 @@
-package me.partlysunny.game.ui.window;
+package me.partlysunny.ui.window;
 
-import me.partlysunny.TUtil;
 import me.partlysunny.game.map.GameMap;
 import me.partlysunny.game.map.RenderableMap;
 import me.partlysunny.network.client.ClientLoop;

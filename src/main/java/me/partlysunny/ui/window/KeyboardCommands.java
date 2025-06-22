@@ -1,4 +1,4 @@
-package me.partlysunny.game.ui.window;
+package me.partlysunny.ui.window;
 
 import me.partlysunny.network.client.ClientLoop;
 

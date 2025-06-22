@@ -1,4 +1,4 @@
-package me.partlysunny.game.ui.window;
+package me.partlysunny.ui.window;
 
 import me.partlysunny.game.GameState;
 import me.partlysunny.game.map.RenderableMap;

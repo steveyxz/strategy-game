@@ -2,8 +2,8 @@ package me.partlysunny.game.map;
 
 import io.netty.buffer.ByteBuf;
 import me.partlysunny.game.ColorPalette;
-import me.partlysunny.game.menu.InfoMenu;
-import me.partlysunny.game.menu.SideMenu;
+import me.partlysunny.ui.console.menu.InfoMenu;
+import me.partlysunny.ui.console.menu.SideMenu;
 import me.partlysunny.game.tile.Tile;
 import me.partlysunny.game.tile.TileRegistry;
 import me.partlysunny.game.unit.Unit;

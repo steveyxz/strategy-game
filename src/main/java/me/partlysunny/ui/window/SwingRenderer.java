@@ -1,7 +1,7 @@
-package me.partlysunny.game.ui.window;
+package me.partlysunny.ui.window;
 
 import me.partlysunny.game.GameState;
-import me.partlysunny.game.ui.Renderer;
+import me.partlysunny.ui.Renderer;
 
 public class SwingRenderer implements Renderer {
 

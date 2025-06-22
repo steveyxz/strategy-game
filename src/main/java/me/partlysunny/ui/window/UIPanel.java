@@ -1,7 +1,7 @@
-package me.partlysunny.game.ui.window;
+package me.partlysunny.ui.window;
 
-import me.partlysunny.game.ui.window.menu.InfoMenu;
-import me.partlysunny.game.ui.window.menu.MenuBuilder;
+import me.partlysunny.ui.window.menu.InfoMenu;
+import me.partlysunny.ui.window.menu.MenuBuilder;
 
 import javax.swing.*;
 import java.awt.*;

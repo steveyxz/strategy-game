@@ -2,6 +2,7 @@ package me.partlysunny;
 
 import me.partlysunny.network.client.ClientLoop;
 import me.partlysunny.network.server.ServerLoop;
+import me.partlysunny.ui.lang.Lang;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
 
@@ -17,6 +18,7 @@ public class Main {
         if (Objects.equals(args[0], "server")) {
             ServerLoop.start(args);
         } else {
+            Lang.load("en");
             ClientLoop.start(args);
         }
     }

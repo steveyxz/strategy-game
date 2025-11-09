@@ -19,7 +19,7 @@ public class MouseCommands extends MouseAdapter {
         int dx = e.getX() - lastX;
         int dy = e.getY() - lastY;
         int distSq = dx * dx + dy * dy;
-        System.out.println(distSq);
+//        System.out.println(distSq);
         int threshold = 50;
         if (distSq < threshold * threshold) {
             return;
@@ -55,14 +55,14 @@ public class MouseCommands extends MouseAdapter {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("mouseReleased");
+//        System.out.println("mouseReleased");
         lastX = null;
         lastY = null;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.println("mousePressed");
+//        System.out.println("mousePressed");
         lastX = null;
         lastY = null;
     }

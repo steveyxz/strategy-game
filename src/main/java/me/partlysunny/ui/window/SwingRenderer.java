@@ -11,6 +11,9 @@ public class SwingRenderer implements Renderer {
     public void run() {
         frame = new MainPanel();
         frame.setVisible(true);
+        while (true) {
+            frame();
+        }
     }
 
     @Override
